@@ -1,7 +1,7 @@
-import 'middleware_test.dart' as middlewareMain;
-import 'store_test.dart' as storeMain;
+import 'middleware_test.dart' as middleware_test;
+import 'store_test.dart' as store_test;
 
 void main() {
-  storeMain.main();
-  middlewareMain.main();
+  store_test.main();
+  middleware_test.main();
 }

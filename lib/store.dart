@@ -1,3 +1,5 @@
+import 'dart:async';
+
 typedef Reducer<T> = T Function(T state, dynamic action);
 
 abstract class ReducerClass<T> {
@@ -25,12 +27,14 @@ class Store<T> {
 
   late T _state;
   late List<Dispatcher> _dispatchers;
+  final StreamController<T> _controller;
 
   Store(this.reducer, {
     required T initialState,
     List<Middleware<T>> middleware = const [],
     bool distinct = false,
-  }) {
+    bool syncStream = false,
+  }): _controller = StreamController<T>.broadcast(sync: syncStream) {
     _state = initialState;
     _dispatchers = _initDispatchers(
       middleware: middleware, 
@@ -40,11 +44,14 @@ class Store<T> {
 
   T get state => _state;
 
+  Stream<T> get changeStream => _controller.stream;
+
   Dispatcher _createDispatcher(bool distinct) {
     return (dynamic action) {
       final state = reducer(_state, action);
       if (distinct && state == _state) return;
       _state = state;
+      _controller.add(state);
     };
   }
 
@@ -66,5 +73,9 @@ class Store<T> {
 
   dynamic dispatch(dynamic action) {
     return _dispatchers.first(action);
+  }
+
+  void teardown() {
+    _controller.close();
   }
 }

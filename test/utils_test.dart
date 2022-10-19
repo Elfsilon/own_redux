@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:own_redux/store.dart';
 import 'package:own_redux/utils.dart';
 import 'package:test/test.dart';
